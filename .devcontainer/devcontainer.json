@@ -1,0 +1,76 @@
+{
+    "name": "zobot_dev",
+    "remoteUser": "dev",
+    "build": {
+        "dockerfile": "Dockerfile.ai",
+        "context": "..",
+        "args": {
+            "CR_PAT": "${localEnv:CR_PAT}@",
+            "ISAAC_VERSION": "4.5"
+        }
+    },
+    "features": {
+		"ghcr.io/devcontainers/features/common-utils:latest": {},
+		"ghcr.io/gvatsal60/dev-container-features/pre-commit:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/blooop/devcontainer-features/user:latest": {}
+	},
+    "containerEnv": {
+        "CR_PAT": "${localEnv:CR_PAT}",
+        "ROS_DOMAIN_ID":"${localEnv:ROS_DOMAIN_ID}",
+        "HOME":"/home/dev",
+        "BIN_FOLDER":"/home/dev/ai_ws/bin",
+        "ACCEPT_EULA": "Y",
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "LD_LIBRARY_PATH": "/isaac-sim/exts/omni.isaac.ros2_bridge/humble/lib",
+        "ROS_DISTRO": "humble",
+        "XDG_RUNTIME_DIR": "/tmp/runtime-root",
+        "QT_X11_NO_MITSHM": "1",
+        "ZOBOT_LOCAL_FOLDER": "${localWorkspaceFolder}/../.local"
+    },
+    "postCreateCommand": "/bin/bash .devcontainer/setup_env.sh",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "charliermarsh.ruff",
+                "ms-vscode.cpptools-extension-pack",
+                "ms-iot.vscode-ros",
+                "smilerobotics.urdf",
+                "redhat.vscode-xml",
+                "tamasfe.even-better-toml",
+                "timonwong.shellcheck",
+                "yzhang.markdown-all-in-one"
+            ],
+            "settings": {
+                "files.associations": {
+                    "*.rviz": "yaml",
+                    "*.srdf": "xml",
+                    "*.urdf": "xml",
+                    "*.xacro": "xml"
+                }
+            }
+        }
+    },
+    "workspaceFolder": "/home/dev/ai_ws",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/dev/ai_ws,type=bind",
+    "mounts": [
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/kit,target=/isaac-sim/kit/cache,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/ov,target=/home/dev/.cache/ov,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/pip,target=/home/dev/.cache/pip,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/glcache,target=/home/dev/.cache/nvidia/GLCache,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/computecache,target=/home/dev/.nv/ComputeCache,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/logs,target=/home/dev/.nvidia-omniverse/logs,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/data,target=/.local/share/ov/data,type=bind",
+        "source=${localWorkspaceFolder}/../.local/isaac_sim/cache/warp,target=/home/dev/.cache/warp,type=bind"
+    ],
+    "runArgs": [
+        "--net=host",
+        "--gpus=all",
+        "--runtime=nvidia",
+        "--env=DISPLAY",
+        "--env=NVIDIA_DRIVER_CAPABILITIES=all",
+        "--env=NVIDIA_VISIBLE_DEVICES=all"
+        ],
+    "privileged": true
+  }

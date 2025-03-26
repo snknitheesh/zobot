@@ -1,0 +1,39 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+if [ $1 ]; then
+  case $1 in
+    isaac)
+    echo -e "
+    ${GREEN}
+    \n********    Opening IsaacSim       ********
+    ${NC}
+    "
+    ros2 launch zobot isaac.launch.py
+    ;;
+    prune)
+    echo -e "
+
+    *************************************************************************************
+    *
+    *    ${RED}  WARNING!!!  This will remove all Docker Containers - $CONTAINER_NAME ${NC}
+    *
+    *************************************************************************************
+
+    "
+    ;;
+    *)
+    ;;
+  esac
+
+else
+  echo -e "\n${GREEN}********
+
+  isaac - runs isaac sim example
+  prune - prunes the isaac sim cache
+
+  ********${NC}\n"
+fi

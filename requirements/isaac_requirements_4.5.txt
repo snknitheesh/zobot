@@ -1,0 +1,28 @@
+# AI
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# Isaac Requirements
+isaacsim==4.5.0.0
+isaacsim-extscache-physics==4.5.0.0
+isaacsim-extscache-kit-sdk==4.5.0.0
+isaacsim-extscache-kit==4.5.0.0
+isaacsim-app==4.5.0.0
+isaacsim-asset==4.5.0.0
+isaacsim-benchmark==4.5.0.0
+isaacsim-code-editor==4.5.0.0
+isaacsim-core==4.5.0.0
+isaacsim-cortex==4.5.0.0
+isaacsim-example==4.5.0.0
+isaacsim-gui==4.5.0.0
+isaacsim-replicator==4.5.0.0
+isaacsim-rl==4.5.0.0
+isaacsim-robot==4.5.0.0
+isaacsim-robot-motion==4.5.0.0
+isaacsim-robot-setup==4.5.0.0
+isaacsim-ros1==4.5.0.0
+isaacsim-ros2==4.5.0.0
+isaacsim-sensor==4.5.0.0
+isaacsim-storage==4.5.0.0
+isaacsim-template==4.5.0.0
+isaacsim-test==4.5.0.0
+isaacsim-utils==4.5.0.0

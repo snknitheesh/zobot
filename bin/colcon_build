@@ -1,0 +1,91 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+REPO_FOLDER="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && cd .. && pwd )"
+ROS_FOLDER="$(cd $REPO_FOLDER && cd ros && pwd)"
+UTILS_FOLDER="$(cd $REPO_FOLDER && cd requirements && pwd)"
+AI_WS="$HOME/ws_ai"
+
+if [ $1 ]; then
+  case $1 in
+    dep)
+      echo -e "
+      ${GREEN}
+      \n********    install python Dependencies        ********
+      ${NC}
+      "
+      # Install all the ROS python requirements
+      cd $UTILS_FOLDER &>/dev/null &&
+      pip3 install -r $UTILS_FOLDER/ros_requirements.txt
+      ;;
+    test)
+      pushd $AI_WS &>/dev/null &&
+      colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON --base-paths $ROS_FOLDER
+      colcon test
+      colcon test-result --verbose
+      ;;
+    clean)
+      echo -e "
+      ${GREEN}
+      \n********    Cleaning ROS workspace        ********
+      ${NC}
+      "
+      pushd $HOME &>/dev/null &&
+      rm -rf $AI_WS &&
+
+      mkdir -p $AI_WS &&
+
+      # Remove all the built files from AMENT_PREFIX_PATH and CMAKE_PREFIX_PATH
+      export AMENT_PREFIX_PATH=
+      export CMAKE_PREFIX_PATH=
+      source /opt/ros/humble/setup.bash
+      rosdep update
+
+      echo -e "
+      ${GREEN}
+      \n********    Install - requirements.txt        ********
+      ${NC}
+      "
+      # Install all the ROS python requirements
+      cd $UTILS_FOLDER &>/dev/null &&
+      pip3 install -r $UTILS_FOLDER/ros_requirements.txt
+
+      echo -e "
+      ${GREEN}
+
+      \n********    Install missing packages        ********
+      ${NC}
+      "
+
+      cd $AI_WS &>/dev/null &&
+      rosdep install --ignore-src --from-paths . -y
+
+      popd &>/dev/null
+    ;;
+    *)
+      # Build a single package
+      pushd $AI_WS/  &>/dev/null &&
+      colcon build --symlink-install --packages-select $1 --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF --base-paths $ROS_FOLDER &&
+      source install/local_setup.bash &&
+      popd &>/dev/null
+    ;;
+  esac
+
+else
+  echo -e "\n${GREEN}********    Compile ROS        ********${NC}\n"
+
+  # Pull in all the ROS2 packages you have installed
+  source $HOME/.bashrc
+
+  if [ -d "$AI_WS" ]; then
+    # Compile the ros code
+    pushd $AI_WS  &>/dev/null &&
+    export LTO_PARALLELISM=12
+    export CMAKE_COMMAND=/usr/bin/cmake
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=OFF -DCMAKE_C_FLAGS="-flto=${LTO_PARALLELISM}" -DCMAKE_CXX_FLAGS="-flto=${LTO_PARALLELISM}" --base-paths $ROS_FOLDER&&
+    source install/setup.bash &&
+    popd &>/dev/null
+  fi
+fi

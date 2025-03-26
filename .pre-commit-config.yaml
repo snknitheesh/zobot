@@ -1,0 +1,81 @@
+# To use:
+#
+#     pre-commit run -a
+#
+# Or:
+#
+#     pre-commit install  # (runs every time you commit in git)
+#
+# To update this file:
+#
+#     pre-commit autoupdate
+#
+# See https://github.com/pre-commit/pre-commit
+
+repos:
+  # Standard hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-symlinks
+      # - id: check-xml #TODO fix these
+      - id: check-toml
+      - id: check-yaml
+        args: ['--unsafe']  # Fixes errors parsing custom jinja templates
+      - id: debug-statements
+      - id: end-of-file-fixer
+        exclude: |
+            (?x)^(
+                ^.*\.hdr
+            )$
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+      - id: fix-byte-order-marker
+      - id: forbid-new-submodules
+      - id: detect-private-key
+      # - id: check-shebang-scripts-are-executable TODO: fix these
+
+  # Formatter for python
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
+    hooks:
+      # Run the linter.
+      # - id: ruff
+      #   types_or: [ python, pyi ]
+      #   args: ["--fix"]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi ]
+
+  # Checks for spelling mistakes
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        args: ["--write-changes","--ignore-words=./codespell-ignore.txt"]
+        exclude: \.(svg|pyc|lock|json|hrd|pgm)$
+
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v20.1.0
+    hooks:
+      - id: clang-format
+        args: ['--style={BasedOnStyle: Google, ColumnLimit: 100}']
+        files: \.(c|h|cpp|hpp|cc|hh|cxx|hxx|proto|ino)$
+        types_or: [text]
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.6.2 #this is out of date but the most recent version finds errors TODO: fix
+    hooks:
+      - id: prettier
+        files: \.(js|tsx|ts)$
+
+  # Strip the output cells of the notebooks in order to avoid commiting large diffs unnecessarily
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout
